@@ -9,7 +9,7 @@ import authRoutes from './routes/auth'
 import path from "path"
 import { getAuthUser, getAuthUserFromJwt } from "./utils/getAuthUser"
 import { jwtUserPayloadType } from "./utils/getAuthToken"
-import { prisma, PrismaClient } from "@prisma/client"
+import { meeting_room, PrismaClient } from "@prisma/client"
 import language from '@google-cloud/language'
 
 const client = new language.LanguageServiceClient();
@@ -17,11 +17,13 @@ const client = new language.LanguageServiceClient();
 
 dotenv.config()
 
+const prisma = new PrismaClient()
 
 const PORT = process.env.PORT || 5002
 const app = express()
 const server = http.createServer(app)
 
+app.set('trust proxy', true);
 app.use(cors())
 app.use(express.json())
 app.use('/api/auth', authRoutes)
@@ -181,18 +183,22 @@ const joinRoomHandler = async (data: { roomId: any; onlyAudio: any; jwtToken: st
         roomId,
         onlyAudio,
     }
-
-    // join room as user which just is trying to join room passing room id
-    const prisma = new PrismaClient()
-    const room = await prisma.meeting_room.findFirst({
-        where: {
-            id: roomId
-        }
-    })
     let localRoomInstance = roomsConnectedUsers.find((room) => room.roomId === roomId)
 
-    if (!room) {
-        console.error('1Invalid room Id: ', roomId, localRoomInstance, room)
+    let room: meeting_room;
+    try {
+        // join room as user which just is trying to join room passing room id
+        const tmpRoom = await prisma.meeting_room.findFirst({
+            where: {
+                id: roomId
+            }
+        })
+        if (!tmpRoom) {
+            throw new Error(`1Invalid room Id: ${roomId}`)
+        }
+        room=tmpRoom
+    } catch (err) {
+        console.error('1Invalid room Id: ', roomId, localRoomInstance)
         io.to(socket.id).emit('conn-error', {
             errorMessage: 'Invalid room Id. Are you sure that the meeting exists? 🤔'
         })
@@ -299,19 +305,29 @@ const disconnectHandler = (socket: { id: any; leave: (arg0: any) => void }) => {
 }
 
 // create route to check if room exists
-app.get("/api/room-exists/:roomId", (req, res) => {
-    const { roomId } = req.params
-    const room = roomsConnectedUsers.find((room) => room.roomId === roomId)
+app.get("/api/room-exists/:roomId", async (req, res) => {
+    try {
+        const { roomId } = req.params
 
-    if (room) {
-        // send reponse that room exists
-        if (room.connectedUsers.length > 3) {
-            return res.send({ roomExists: true, full: true })
+        const meeting = await prisma.meeting_room.findFirst({
+            where: {
+                id: roomId
+            },
+        })
+
+        if (meeting) {
+            const room = roomsConnectedUsers.find(e => e.roomId === roomId)
+            // send reponse that room exists
+            if (room?.connectedUsers.length > 3) {
+                return res.send({ roomExists: true, full: true })
+            } else {
+                return res.send({ roomExists: true, full: false })
+            }
         } else {
-            return res.send({ roomExists: true, full: false })
+            // send response that room does not exists
+            return res.send({ roomExists: false })
         }
-    } else {
-        // send response that room does not exists
+    } catch (err) {
         return res.send({ roomExists: false })
     }
 })
@@ -360,7 +376,7 @@ const directMessageHandler = (data: { receiverSocketId: any; messageContent: any
 
 
 const findSentiment = async (text: string) => {
-    const result=await client.analyzeSentiment({
+    const result = await client.analyzeSentiment({
         document: {
             type: 'PLAIN_TEXT',
             content: text
@@ -368,11 +384,11 @@ const findSentiment = async (text: string) => {
     })
     console.log(result)
     const val = result[0].documentSentiment?.score
-    if(val && val>=0.5){
+    if (val && val >= 0.5) {
         return 1;
-    }else if(val && val <-0.5) {
+    } else if (val && val < -0.5) {
         return -1;
-    }else{
+    } else {
         return 0;
     }
 }
@@ -397,6 +413,7 @@ app.post('/api/findSentiment', async (req, res) => {
 
 app.post("/api/summarize", async (req, res) => {
     try {
+        cohere.init(cohereApiKey)
         const { input } = req.body;
         const response = await cohere.generate({
             model: "large",
@@ -440,13 +457,13 @@ app.post('/api/broadcastMessage', async (req, res) => {
         user = result;
 
 
-        const primsa = new PrismaClient()
-        const instance = await primsa.incall_message.create({
+        const instance = await prisma.incall_message.create({
             data: {
                 sender_id: user.id,
                 text: data.messageContent,
                 englishTranslatedText: data.messageContent,
-                meeting_id: data.roomId // we don't need to validate it. :)
+                meeting_id: data.roomId, // we don't need to validate it. :)
+                sentiment: data.sentiment
             }
         })
 
@@ -457,12 +474,118 @@ app.post('/api/broadcastMessage', async (req, res) => {
     } catch (err) {
         console.log(err)
         res.send({
-            sentiment: 0
+            error: true,
+            message: 'something went wrong [1912]'
         });
     }
 })
 
 
+
+
+app.get('/api/transcripts/:meet_id', async (req, res) => {
+    try {
+        const user = getAuthUser(req);
+        const meetId = req.params.meet_id
+
+
+        const meeting = await prisma.meeting_room.findFirst({
+            where: {
+                id: meetId
+            },
+            include: {
+                owner: true,
+                _count: {
+                    select: {
+                        participant: true
+                    }
+                },
+            },
+        })
+
+        if (!meeting) throw new Error('[161]: Invalid meeting Id')
+
+        const messages = await prisma.incall_message.findMany({
+            where: {
+                meeting_id: meetId,
+            },
+            include: {
+                sender: true,
+            },
+            orderBy: {
+                sent_at: 'desc'
+            }
+        })
+
+
+        return res.send({
+            error: false,
+            meeting: {
+                ...meeting,
+                am_i_the_owner: meeting?.owner_id === user?.id,
+                participants_count: meeting?._count.participant,
+            },
+            messages
+        })
+
+
+    } catch (err) {
+        return res.send({
+            error: true,
+            message: err.message
+        })
+    }
+})
+
+
+
+app.get('/api/meetings', async (req, res) => {
+    try {
+        const user = getAuthUser(req);
+
+
+        const meetings = await prisma.meeting_room.findMany({
+            where: {
+                participant: {
+                    some: {
+                        user_id: user?.id
+                    }
+                }
+            },
+            include: {
+                _count: {
+                    select: {
+                        participant: true
+                    }
+                },
+                owner: true,
+            },
+            orderBy: {
+                created_time: 'desc'
+            }
+        })
+
+
+        return res.send({
+            error: false,
+            meetings: meetings.map(e => ({
+                id: e.id,
+                title: e.title,
+                owner: e.owner,
+                participants_count: e._count.participant,
+                created_time: e.created_time,
+                am_i_the_owner: e.owner_id === user?.id
+            }))
+        })
+
+
+    } catch (err) {
+        return res.send({
+            error: true,
+            message: err.message
+        })
+    }
+})
 
 app.post('/api/room/create', async (req, res) => {
     const data: {
@@ -487,7 +610,6 @@ app.post('/api/room/create', async (req, res) => {
     }
 
     // create a room
-    const prisma = new PrismaClient()
     const newMeeting = await prisma.meeting_room.create({
         data: {
             title: data.roomTitle,

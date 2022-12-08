@@ -64,6 +64,11 @@ const RoomPage = ({
       // if there is a "conn-error" event then show that error message;;;; DONE; 
     }
     // don't add roomId in dependency list
+
+    return () => {
+      // need it. :)
+      window.location.reload()
+    }
   }, [roomIdFromParams]);
 
 

@@ -12,6 +12,8 @@ import CreateMeetingPage from "./JoinRoomPage/CreateMeetingPage"
 import JoinMeetingPage from "./JoinRoomPage/JoinMeetingPage"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import DashPage from "./DashPage/DashPage"
+import MeetDetailsPage from "./MeetDetailsPage/MeetDetailsPage"
 
 
 function App({ setUserInfoAction }) {
@@ -38,6 +40,8 @@ function App({ setUserInfoAction }) {
         {/* <Route exact path='/room' element={<RoomPage />} /> */}
         <Route path='/room/:room_id' element={<RoomPage />} />
         <Route exact path='/' element={<IntroductionPage />} />
+        <Route exact path='/dash' element={<DashPage />} />
+        <Route exact path='/transcripts/:meet_id' element={<MeetDetailsPage />} />
       </Routes>
       <ToastContainer autoClose='1000' />
     </Router>

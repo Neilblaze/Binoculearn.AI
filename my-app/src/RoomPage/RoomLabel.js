@@ -16,7 +16,7 @@ const RoomLabel = ({ roomId }) => {
   // onClick handler function for the copy button
   const handleCopyClick = () => {
     // Asynchronously call copyTextToClipboard
-    copyTextToClipboard(roomId)
+    copyTextToClipboard(window.location.href)
       .then(() => {
         // If successful, update the isCopied state value
         setIsCopied(true)
@@ -34,9 +34,7 @@ const RoomLabel = ({ roomId }) => {
       <p className='room_label_paragraph'>Meeting ID: {roomId}</p>
       <a style={{ paddingTop: "0.5rem" }} href='#'>
         <button
-          onClick={() => {
-            navigator.clipboard.writeText(roomId)
-          }}
+          onClick={handleCopyClick}
           style={{
             background: "none",
             color: "inherit",

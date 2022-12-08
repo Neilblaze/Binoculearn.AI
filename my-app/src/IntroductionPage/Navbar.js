@@ -5,13 +5,13 @@ import logo from "../resources/images/logo.png";
 import { START_GOOGLE_SIGNIN } from "../utils/api";
 
 export const Navbar = (props) => {
-  const { currentLoggedInUser,logoutUserAction } = props
+  const { currentLoggedInUser, logoutUserAction } = props
 
   return (
     <div className='' style={{}}>
-      <header className=''>
+      <header className='flex flex-col sm:flex-row justify-start sm:justify-between px-10 pt-5 sm:pt-0 gap-4'>
         <Link to='/'>
-        <img src={logo} className='w-72'></img>
+          <img src={logo} className='w-72'></img>
         </Link>
 
         <ul className='flex justify-end items-center'>

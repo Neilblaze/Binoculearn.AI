@@ -1,129 +1,120 @@
-## Inspiration 💡
+![thumbnail-gh](https://user-images.githubusercontent.com/48355572/206574506-a4f3ea19-b32a-4941-91d5-8917e6b3c7ee.png)
 
-As ubiquitous and fast as the internet seems in developed countries, developing countries still struggle with reliable internet connections. The impact of poor internet connectivity exasperate the education inequality between children from prosperous countries and children from developing countries, because the latter cannot benefit from remote learning via video conferencing.
+# Binoculearn.ai
+𝘓𝘦𝘢𝘳𝘯𝘪𝘯𝘨 𝘪𝘯 𝘭𝘰𝘸-𝘣𝘢𝘯𝘥𝘸𝘪𝘥𝘵𝘩 𝘪𝘯𝘵𝘦𝘳𝘯𝘦𝘵 𝘙𝘦𝘥𝘦𝘧𝘪𝘯𝘦𝘥⚡ — Project Submission for MongoDB Atlas Hackathon'22 🍃
 
-Last year, it was found that that millions of students in the state of Odisha in India are stuck at home with no access to either internet or online education. Our teammate Subham Saahu, an Odisha native, has had first-hand experience of interruptions during his undergraduate studies.
+**Binoculearn** is a bleeding-edge smart P2P *educational* ***video conferencing web application*** aimed to deliver a *reliable frame rate* & is backed by low-latency support along with low jitter (smooth and consistent), as well as high audio quality. We do this by *converting the video stream into ASCII characters on the client side* and send it via *WebRTC* using [**Twilio’s video conferencing service**](https://www.twilio.com/docs/video) & is fuelled by [**MongoDB Atlas**](https://www.mongodb.com/atlas/database)! 🍃
 
-For even those who have access to the internet, the price is premium and the bandwidth limited. For instance, while talking to his parents in India, Subham found that they frequently run out of their allocated 1 GB far before the allowance period, after which the bandwidth gets throttled: stalled frames, choppy audio, painful delays, and eventual disconnections, and subsequent retries are a normal occurrence, but still arguably much better than normal telephone conversations because he gets to “see” them.
+![image](https://user-images.githubusercontent.com/48355572/206498204-02bf9689-74f3-4bb2-82a6-bf1f3c54de77.png)
 
-At the heart of the problem lay lack of tele infrastructure for implementation of education on virtual platforms.
+💡 Implementing video conferencing using this technique *saves bandwidth bidirectionally* & especially on the receiver end. This method is *horizontally scalable* as we can feed more users as they enter the conference.
 
-To address this problem, we propose a new approach based on the insight that if we are willing to give up some realism or realistic rendering of faces and screens, then there is whole new world of face and screen representations that can be derived for ultra-low bandwidth, with an acceptable quality of experience.
+---
 
-The proposed solution can be primarily implemented as software needing no change in the underlying infrastructure. This would in turn be cheaper, and allow internet access to people that are currently being marginalized based on their affordability.
+## Installing / Getting started
 
-Our architectural goal is to prioritize reliable frame rate with low latency and low jitter (smooth and consistent), as well as high audio quality. This should serve the purposes of online education
+There are two folders, where `my-app` is for the front-end & `server` is for the backend. 
 
-![Group-1686550957.gif](https://i.postimg.cc/8c7j7ndF/Group-1686550957.gif)
+### Setting up Dev [Make sure `.env` is loaded with your own credentials]
 
-## What it does 🤔
-Binoculearn is an educational video conferencing web application with reliable frame rate with low latency and low jitter (smooth and consistent), as well as high audio quality. We do this by converting the video stream into ASCII characters on the client side and send it via WebRTC using Twilio’s video conferencing service.
+```shell
+git clone https://github.com/Neilblaze/Binoculearn.AI
+cd server
+npm i
+npm start
+```
 
-Implementing video conferencing using this technique saves bandwidth on the receiver end. This method is horizontally scalable as we can feed more users as they enter the conference.
+### Setting up Frontend
 
-![Mid.png](https://i.postimg.cc/8zZcbSyF/Mid.png)
+```shell
+git clone https://github.com/Neilblaze/Binoculearn.AI
+cd my-app
+npm i
+npm start
+```
 
-Our goal with this platform is to connect students in poor connected areas with highly qualified teachers in metropolitan areas and abroad to facilitate remote collaboration, lectures, and Q&A. 
 
-On top of the bandwidth saving functionality, we also offer educational and content-moderation tools like sentiment analysis for Q&A and meeting summarization using Cohere.ai. These features allow both the educators and students to maintain decorum in the meeting and also have follow-up material to retain information about the meeting.
+P.S.> Open in two different shells in VS code for smooth experience! 
 
-![FLow.png](https://i.postimg.cc/05ddY6qc/FLow.png)
+---
 
-## How we built it ⚙️
 
+### Features 🎠
+
+- P2P lagfree video conferencing app with ultra-low bandwidth support
+- Bleeding-edge Image Compression Algorithm
+- Horizontally Scaleble [Currently capped at 4, because of Twilio Credits]
+- Twilio Live Transcription [Stored in MongoDB Atlas]
+- P2P Messaging with Sentiment Analysis via Natural Language API
+- Generate Summary of the meeting
+- File Sharing (blob) via MongoDB Atlas
+- User Dashboard with Previous Activity Tracker
+- Minimalist UI/UX powered by ReactJS & Tailwind CSS
+- High Quality Multiplexed Audio
+- Overall Meeting Emotion Tracker
+- MongoDB Atlas as Non-SQL DB
+- Saves 💰 + Internet Data
+- Secure O-Auth via Firebase by Google
+- 100% GDPR compliant & SEO friendly inteface!
+
+### Privacy & Security 🔐
+Binoculearn deals with a wide range of sensitive information. In the wrong hands, this data could dramatically harm individuals. We took special efforts and considerations to ensure that our platform protects the privacy and sensitive information of all of our users making it 100% GDPR compliant!
+
+We also made sure that all data is sent securely over the network. Binoculearn leverages the security benefits of TLS for encryption. We also encoded all of our data using Base64 encoding. Ideally, in a future iteration, we would like to encrypt all data using a more secure method.
+
+### Screenshots 🖼️
+
+**Home Page [Before O-Auth]**            |  **Home Page [After O-Auth]**
+:-------------------------:|:-------------------------:
+![image](https://user-images.githubusercontent.com/48355572/206563085-b95c2b53-e061-46dc-9663-217c36a668fc.png)  |  ![image](https://user-images.githubusercontent.com/48355572/206563927-e84fbfbb-2677-41bc-900e-7cbb3a167334.png) 
+
+**Host a Meeting**            |  **Join a Meeting**
+:-------------------------:|:-------------------------:
+![image](https://user-images.githubusercontent.com/48355572/206564693-06c567bd-ec04-414d-a51c-365dc6e210a7.png)  |  ![image](https://user-images.githubusercontent.com/48355572/206564807-7775e11e-128f-487e-a6c7-52f56474a9a4.png)
+
+### Description 🦄
+Experience a *Superfast*, *low-latency* P2P videochat even on *ultra-low Bandwidth* networks. Redefining the communication gap, Binoculearn is a **MIT licensed** open-sourced project made for students, by the students & will be **Free Forever**! ⚡ 
+
+[![Recording](https://i.postimg.cc/Y0vMJmPM/Recording-2022-12-09-at-01-48-43.gif)](https://www.youtubetrimmer.com/view/?v=zA9G48irhT0&start=91&end=110&loop=0)
+
+☝️ In the above Gif, Gaurang can been seen in ASCII showing the demo.
+
+On top of the bandwidth-saving functionality, we also offer educational and content-moderation tools like **Sentiment Analysis via Google Cloud's [Natural Language API](https://cloud.google.com/natural-language)** for session chat QnA and our custom Trained ML model deployed on GCP for **Meeting Summarization**. 
+
+![image](https://user-images.githubusercontent.com/48355572/206547367-1a1d8b3c-2d2f-4914-b8ac-84acb900da55.png)
+
+These features allow both the educators and students to maintain decorum in the meeting and also have follow-up material to retain information about the meeting!
+
+### License ⚖️
+Distributed under the [MIT](https://github.com/Neilblaze/Binoculearn.AI/blob/main/LICENSE) License. See `LICENSE.txt` for more information.
+
+
+### How we built it ⚙️
 First and foremost, it is Crafted with 💙. The whole process can be broken into the following points :-
-- React, Redux on the frontend
-- Express.js, Node.js, Sockets, WebRTC, Twilio Live on the backend
-- External services like Twilio, Cohere.ai
+- ➤ ReactJS, Redux + Tailwind CSS on the frontend
+- ➤ Express.js, Node.js, Sockets, WebRTC, Twilio Live on the backend
 
-![Tech-Stack-Final-1.png](https://i.postimg.cc/9FVy8cB1/Tech-Stack-Final-1.png)
+![image](https://user-images.githubusercontent.com/48355572/206561116-36a9cba5-dd6b-412a-b58b-fba46c370f06.png)
 
-QnA model Architecture BERT:
+- ➤ Prisma for connecting the Frontend to the DMongoDB Atlas to store user Data + Logs
+- ➤ External services like Twilio, GCP Natural Language API
+- ➤ GitHub as CI/CD and Vercel for Deployment
 
-![image-172.png](https://i.postimg.cc/Wp9sKnGK/image-172.png)
-
-Summarizer Architecture :
-
-![image-173.png](https://i.postimg.cc/5t1cjY5L/image-173.png)
-
----
-
-## Design 🎨
-
-We were heavily inspired by the revised version of **Double Diamond** design process, which not only includes visual design, but a full-fledged research cycle in which you must discover and define your problem before tackling your solution & then finally deploy it.
-
-![DD](https://i.postimg.cc/W4bvXqDj/image-148.png)
-
-> 1. **Discover**: a deep dive into the problem we are trying to solve.
-> 2. **Define**: synthesizing the information from the discovery phase into a problem definition.
-> 3. **Develop**: think up solutions to the problem.
-> 4. **Deliver**: pick the best solution and build that.
-
-Moreover, we utilized design tools like Figma,  Photoshop & Illustrator to prototype our designs before doing any coding. Through this, we are able to get iterative feedback so that we spend less time re-writing code.
-
-![image-178.png](https://i.postimg.cc/XvFw1qtH/image-178.png)
-
-![breaker.png](https://i.postimg.cc/YSvrrWnc/breaker.png)
-
-# Research 📚
-Research is the key to empathizing with users: we found our specific user group early and that paves the way for our whole project. Here are a few of the resources that were helpful to us —
+![image](https://user-images.githubusercontent.com/48355572/206552694-08336d50-be9a-4672-879a-b380ee4152d2.png)
 
 
-- https://www.csmonitor.com/Environment/2021/0305/Zoom-isn-t-carbon-free.-The-climate-costs-of-staying-home#:~:text=An%20hour%20of%20high%2Ddefinition,mile%20in%20an%20average%20car.
-- https://www.theguardian.com/technology/2021/nov/30/more-than-a-third-of-worlds-population-has-never-used-the-internet-says-un
-- https://towardsdatascience.com/video-calling-for-billions-without-internet-40d10069c464
-- https://www.retrium.com/blog/dont-let-slow-internet-connections-ruin-your-retrospectives
-- https://www.statista.com/chart/17247/the-average-cost-of-mobile-data-in-selected-countries/
-- https://www.broadbandsearch.net/blog/internet-statistics
-- https://js.tensorflow.org/api/2.3.0/
-- https://www.udemy.com/course/webrtc-practical-course-create-video-chat-group-call-app/
-- https://www.speechly.com/blog/create-a-webrtc-video-chat-app-with-speechly-transcription 
-- https://aclanthology.org/2020.lrec-1.825.pdf
-- https://www.currentscience.ac.in/Volumes/110/01/0069.pdf 
+**QnA model Architecture BERT:**            |  **Summarizer Architecture**
+:-------------------------:|:-------------------------:
+![image-172.png](https://i.postimg.cc/Wp9sKnGK/image-172.png) | ![image-173.png](https://i.postimg.cc/5t1cjY5L/image-173.png)
 
 
-**CREDITS**
-- **Design Resources** : Freepik, Behance
-- **Icons** : Icons8, fontawesome
-- **Font** : Urbanist / Roboto / Raleway 
+➤  **Prisma Schema for MongoDB Atlas:**
+![image](https://user-images.githubusercontent.com/48355572/206562434-7e8b63d0-3c28-4460-aa89-68609e280435.png)
 
 ---
 
-## Challenges we ran into 😤
-We faced some challenges during the hackathon, many of which ironically related to working remotely. One of the major challenges was the time difference. All of us participated from different time zones, which created communication challenges.
 
-## Best Use of NLP with Cohere🗣️
-Cohere makes Natural Language Processing easy to do with their ready to use online platform. Cohere's Summarization API (TLDR) and Sentiment Analysis API were super useful in adding intelligence to our application and making our Q&A section in the video call AI-enabled.
-
- ## Most Creative Use of Twilio 👷🏻‍♂️
-Twilio live was seamless to interact with in creating our video conferencing feature! We converted our video stream to ASCII and streamed it using Twilio's video API which made saved us a lot of time made it possible for us to finish the hackathon in 24 hours.
-
-## Accomplishments that we're proud of ✨
-We are proud of finishing the project on time which seemed like a tough task as we started working on it quite late due to other commitments. We were also able to add most of the features that we envisioned for the app during ideation. And as always, working overnight was pretty fun! :)
-
-This project was especially an achievement for us because the experience was very different than in-person hackathons. We found that some parts were the same though - we went through heavy brainstorming and extensive research all to feel the sweet, sweet success of hitting the final pin on the board.
-
-## Scalability & Market Viability 📈
-
-We crafted this app under 24 hours with extensive efforts. We believe this can be a proof-of-concept but it still requires some time to get ready for production so that it can be useful to every individual in need. We plan to refine the app by making it more accessible and then launching the beta version of the app for testing/feedback. After this, we will launch our Mobile app on AppStore and playstore for public use. This project will always be open-source, since it's made for students, by the students!
-
-![meme.png](https://i.postimg.cc/2jh5Lnzr/meme.png)
-
-But yes, PeerJs might run on WebTorrent P2P Mesh protocols, but at the end of the day it's still C++ code running underlying WebRTC which is leveraged by the same.
-
-## What we learned 🙌
-**Proper sleep is very important! :p** Well, a lot of things, both summed up in technical & non-technical sides. Also not to mention, we enhanced our googling and Stackoverflow searching skills during the hackathon :)
-
-![image-172-1.png](https://i.postimg.cc/9QydJz6x/image-172-1.png)
-
-We are a **team of 3** passionate about bringing remote education to areas with poor internet connectivity!. What we create during our Hackathons is just the tip of the iceberg and we believe this project can help uplift the communication lags faced everyday by providing a Safe, Fast & Reliable connection in this time of despair.
-
-## What's next? 🚀
-*We believe that our App has great potential*. We just really want this project to have a positive impact on people's lives! We would love to make it more *scalable* & *cross-platform* so that the user interaction increases to a great extent. Additionally, we intend to continue improving the image compression algorithms & adding receipts to track conversations for later use.
+### Conclusion 🐣
+It has been all fun, & I would love to thank my buddies @subhamX & [**Gaurang**](https://www.gaurang-ruparelia.com) for helping me, & Special thanks goes to @stanimiravlaeva, @mlynn & @joel__lord 🙌. And as always, thank you #DEV #DEVCommunity & #MongoDB for hosting this hackathon! 💚
  
-**Note ⚠️ — API credentials have been revoked. If you want to run the same on your local, use your own credentials.**
-
-![Group-1686550958.png](https://i.postimg.cc/rpcSbMcq/Group-1686550958.png)
-
-
-
+**Update ⚠️ — We ran out of credits, hence API credentials have been revoked! If you want to run the same on your local, use your own credentials.**

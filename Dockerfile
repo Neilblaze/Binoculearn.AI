@@ -26,12 +26,14 @@ WORKDIR /
 # copy files to server
 COPY --from=builder /my-app/build ./dist/build
 # install app dependencies
-RUN apk add --no-cache git
+RUN apk add openssl
+RUN apk add git
 COPY server/package.json ./
 COPY server/package-lock.json ./
 RUN npm install
 COPY server/ ./
 RUN npm i -g typescript
+RUN npm run generate
 RUN npm run build
 
 

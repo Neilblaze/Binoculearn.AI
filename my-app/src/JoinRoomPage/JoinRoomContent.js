@@ -50,7 +50,7 @@ const JoinRoomContent = (props) => {
       } else {
         // join a room !
         setRoomIdAction(roomIdValue);
-        history("/room");
+        history(`/room/${roomIdValue}`);
       }
     } else {
       setErrorMessage("Meeting not found. Check your meeting id.");

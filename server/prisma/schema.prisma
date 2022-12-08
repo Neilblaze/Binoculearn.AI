@@ -26,7 +26,7 @@ model user {
 model meeting_room {
   id             String           @id @default(auto()) @map("_id") @db.ObjectId
   title          String
-  owner_id       String
+  owner_id       String           @db.ObjectId
   owner          user             @relation(fields: [owner_id], references: [id])
   created_time   DateTime         @default(now())
   transcript     transcript[]
@@ -36,10 +36,10 @@ model meeting_room {
 
 model participant {
   meeting_user_id String       @id @default(auto()) @map("_id") @db.ObjectId
-  meeting_id      String
+  meeting_id      String       @db.ObjectId
   meeting         meeting_room @relation(fields: [meeting_id], references: [id])
 
-  user_id String
+  user_id String @db.ObjectId
   user    user   @relation(fields: [user_id], references: [id])
 
   first_joined_at DateTime @default(now())
@@ -51,10 +51,10 @@ model transcript {
 
   timestamp DateTime @default(now())
 
-  meeting_id String
+  meeting_id String       @db.ObjectId
   meeting    meeting_room @relation(fields: [meeting_id], references: [id])
 
-  speaker_id String
+  speaker_id String @db.ObjectId
   speaker    user   @relation(fields: [speaker_id], references: [id])
 
   // we're not storing the actual words said by the user
@@ -67,12 +67,14 @@ model incall_message {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
   sent_at DateTime @default(now())
 
-  meeting_id String
+  meeting_id String       @db.ObjectId
   meeting    meeting_room @relation(fields: [meeting_id], references: [id])
 
   text                  String
   englishTranslatedText String
 
-  sender_id String
+  sentiment Int @default(0)
+
+  sender_id String @db.ObjectId
   sender    user   @relation(fields: [sender_id], references: [id])
 }

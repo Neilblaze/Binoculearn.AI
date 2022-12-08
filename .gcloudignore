@@ -1,0 +1,9 @@
+**/node_modules/
+node_modules/
+node_modules
+
+server/dist/
+server/dist
+
+my-app/build/
+my-app/build

@@ -17,7 +17,7 @@ const ParticipantsSection = ({ messages }) => {
   const findSummary = async () => {
     try {
       setSummary(`Generating summary... Please wait... 😊`)
-      await new Promise((res, rej) => setTimeout(res, 2000))
+      // await new Promise((res, rej) => setTimeout(res, 2000))
 
       const response = await axios.post(GET_SUMMARY_URL, {
         input: text

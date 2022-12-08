@@ -27,3 +27,9 @@ export const CREATE_ROOM=`${process.env.REACT_APP_SERVER_URL}/api/room/create`
 
 
 export const BROADCAST_MESSAGE=`${process.env.REACT_APP_SERVER_URL}/api/broadcastMessage`
+
+
+export const GET_ALL_MEETINGS = `${process.env.REACT_APP_SERVER_URL}/api/meetings`
+
+
+export const GET_TRANSCRIPTS=(meet_id) => `${process.env.REACT_APP_SERVER_URL}/api/transcripts/${meet_id}`
