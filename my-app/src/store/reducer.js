@@ -10,11 +10,23 @@ const initState = {
   messages: [],
   activeConversation: null,
   directChatHistory: [],
-  socketId: null
+  socketId: null,
+  currentLoggedInUser: null,
 };
 
 const reducer = (state = initState, action) => {
+  // console.log('tmp',action.currentLoggedInUser)
   switch (action.type) {
+    case Actions.SET_USER_INFO:
+      return {
+        ...state,
+        currentLoggedInUser: action.currentLoggedInUser,
+      };
+    case Actions.LOGOUT_USER:
+      return {
+        ...state,
+        currentLoggedInUser: null,
+      };
     case Actions.SET_IS_ROOM_HOST:
       return {
         ...state,

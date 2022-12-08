@@ -5,7 +5,7 @@ const Input = ({ placeholder, value, changeHandler }) => {
     <input
       value={value}
       onChange={changeHandler}
-      className="join_room_input"
+      className="block w-[70%] my-3 px-4 py-3 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 "
       placeholder={placeholder}
     />
   );

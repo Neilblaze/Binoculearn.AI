@@ -8,8 +8,25 @@ const Actions = {
   SET_MESSAGES: "SET_MESSAGES",
   SET_ACTIVE_CONVERSATION: 'SET_ACTIVE_CONVERSATION',
   SET_DIRECT_CHAT_HISTORY: 'SET_DIRECT_CHAT_HISTORY',
-  SET_SOCKET_ID: 'SET_SOCKET_ID'
+  SET_SOCKET_ID: 'SET_SOCKET_ID',
+  SET_USER_INFO: 'SET_USER_INFO',
+  LOGOUT_USER: 'LOGOUT_USER'
 };
+
+export const setUserInfo = (currentLoggedInUser) => {
+  return {
+    type: Actions.SET_USER_INFO,
+    currentLoggedInUser
+  };
+}
+
+
+export const logoutUser = () => {
+  localStorage.removeItem(process.env.REACT_APP_TOKEN_COOKIE_KEY)
+  return {
+    type: Actions.LOGOUT_USER,
+  };
+}
 
 export const setIsRoomHost = (isRoomHost) => {
   return {

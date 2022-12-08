@@ -1,51 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  overflow: hidden;
-  font-family: 'Poppins', sans-serif !important;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
-}
-
-.videos_portal_styles {
-  margin-left: 20%;
-  width: calc(60% - 20px);
-  height: calc(100vh - 10%);
-  left: 0;
-  top: 0;
-  position: absolute;
-  display: flex;
-  flex-wrap: wrap;
-  border-right: 1px solid white;
-  border-left: 1px solid white;
-  padding: 60px 10px;
-}
-
-#dummy_video_canvas {
-  display: none;
-}
-
-.video_track_container{
-  height: fit-content;
-}
-.video_track_container pre{
-  height: 300px;
-  font-size: 4.5px;
-  background-color: #545657;
-  overflow: hidden;
-  position: relative;
-  object-position: center;
-  border: 1px solid white;
-  color: white;
-  border-radius: 10px;
-  padding: 1px;
-  width: fit-content;
-  /* border-radius:10%; */
+    font-family: 'Poppins', sans-serif !important;
 }

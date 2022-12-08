@@ -1,16 +1,16 @@
 import React from "react"
 import ConnectingButton from "./ConnectingButton"
-import { useHistory } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
-const ConnectingButtons = () => {
-  let history = useHistory()
+const ConnectingButtons = ({isUserLoggedIn}) => {
+  let history = useNavigate()
 
   const pushToJoinRoomPage = () => {
-    history.push("/join-room")
+    history("/join-room")
   }
 
   const pushToJoinRoomPageAsHost = () => {
-    history.push("/join-room?host=true")
+    history("/join-room?host=true")
   }
 
   return (
@@ -18,10 +18,12 @@ const ConnectingButtons = () => {
       <ConnectingButton
         createRoomButton
         buttonText='Host a meeting'
-        onClickHandler={pushToJoinRoomPageAsHost}
+        disabled={!isUserLoggedIn}
+        onClickHandler={() => isUserLoggedIn? pushToJoinRoomPageAsHost(): alert('Please login to continue')}
       />
       <ConnectingButton
         buttonText='Join a meeting'
+        disabled={!isUserLoggedIn}
         onClickHandler={pushToJoinRoomPage}
       />
     </div>

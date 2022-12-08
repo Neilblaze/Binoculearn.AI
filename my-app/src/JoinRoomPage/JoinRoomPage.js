@@ -1,7 +1,7 @@
 import React, { useEffect } from "react"
 import { useLocation } from "react-router-dom"
 import { connect } from "react-redux"
-import { setIsRoomHost } from "../store/actions"
+import { logoutUser, setIsRoomHost } from "../store/actions"
 import JoinRoomTitle from "./JoinRoomTitle"
 import JoinRoomContent from "./JoinRoomContent"
 import github from "../resources/images/GitHub.png"
@@ -9,9 +9,10 @@ import gdpr from "../resources/images/GDPR.png"
 import logo from "../resources/images/logo.png"
 
 import "./JoinRoomPage.css"
+import { Navbar } from "../IntroductionPage/Navbar"
 
 const JoinRoomPage = (props) => {
-  const { setIsRoomHostAction, isRoomHost } = props
+  const { setIsRoomHostAction, isRoomHost,currentLoggedInUser, logoutUserAction } = props
 
   const search = useLocation().search
 
@@ -24,19 +25,7 @@ const JoinRoomPage = (props) => {
 
   return (
     <div className='join_room_page_container'>
-      <div className='introduction_page_navbar' style={{}}>
-        <header className='introduction_page_header'>
-          <img src={logo} className='logo introduction_page_image'></img>
-
-          <ul className='nav'>
-            <li className='navlink'>
-              <a href='#'>
-                <img src={github}></img>
-              </a>
-            </li>
-          </ul>
-        </header>
-      </div>
+      <Navbar logoutUserAction={logoutUserAction} currentLoggedInUser={currentLoggedInUser}/>
       <div
         style={{
           display: "flex",
@@ -62,6 +51,7 @@ const mapStoreStateToProps = (state) => {
 const mapActionsToProps = (dispatch) => {
   return {
     setIsRoomHostAction: (isRoomHost) => dispatch(setIsRoomHost(isRoomHost)),
+    logoutUserAction: () => dispatch(logoutUser())
   }
 }
 

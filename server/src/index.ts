@@ -5,7 +5,7 @@ import cors from "cors"
 import twilio from "twilio"
 import dotenv from 'dotenv'
 import cohere from 'cohere-ai'
-
+import authRoutes from './routes/auth'
 dotenv.config()
 
 
@@ -15,7 +15,7 @@ const server = http.createServer(app)
 
 app.use(cors())
 app.use(express.json())
-
+app.use('/api/auth', authRoutes)
 
 let connectedUsers: any = []
 let rooms: {

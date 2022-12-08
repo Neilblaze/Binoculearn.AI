@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model user {
+  id                      String           @id @default(auto()) @map("_id") @db.ObjectId
+  name                    String
+  picture                 String
+  email                   String           @unique
+  created_time            DateTime         @default(now())
+  last_token_generated_at DateTime         @default(now())
+  meeting_rooms           meeting_room[]
+  transcript              transcript[]
+  incall_message          incall_message[]
+  participant             participant[]
+}
+
+model meeting_room {
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  owner_id     String
+  owner        user          @relation(fields: [owner_id], references: [id])
+  created_time DateTime      @default(now())
+  transcript   transcript[]
+  participant  participant[]
+}
+
+model participant {
+  meeting_user_id String       @id @default(auto()) @map("_id") @db.ObjectId
+  meeting_id      String
+  meeting         meeting_room @relation(fields: [meeting_id], references: [id])
+
+  user_id String
+  user    user   @relation(fields: [user_id], references: [id])
+
+  first_joined_at DateTime @default(now())
+  last_joined_at  DateTime @default(now())
+}
+
+model transcript {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  timestamp DateTime @default(now())
+
+  meeting_id String
+  meeting    meeting_room @relation(fields: [meeting_id], references: [id])
+
+  speaker_id String
+  speaker    user   @relation(fields: [speaker_id], references: [id])
+
+  // we're not storing the actual words said by the user
+  // we're only interested in storing the translated english version  
+  englishText String
+}
+
+// chat room
+model incall_message {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  sent_at DateTime @default(now())
+
+  text                  String
+  englishTranslatedText String
+
+  sender_id String
+  sender    user   @relation(fields: [sender_id], references: [id])
+}

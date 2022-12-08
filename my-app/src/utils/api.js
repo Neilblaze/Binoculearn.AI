@@ -15,3 +15,10 @@ export const getTURNCredentials = async () => {
 export const GET_SENTIMENT_URL=`${serverApi}/findSentiment`
 
 export const GET_SUMMARY_URL=`${serverApi}/summarize`
+
+
+export const GET_CURRENT_USER=`${process.env.REACT_APP_SERVER_URL}/api/auth/me`
+
+
+
+export const START_GOOGLE_SIGNIN=`${process.env.REACT_APP_SERVER_URL}/api/auth/google/start/`

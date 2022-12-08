@@ -9,7 +9,7 @@ import {
 } from "../store/actions";
 import ErrorMessage from "./ErrorMessage";
 import JoinRoomButtons from "./JoinRoomButtons";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getRoomExists } from "../utils/api";
 
 const JoinRoomContent = (props) => {
@@ -25,7 +25,7 @@ const JoinRoomContent = (props) => {
   const [nameValue, setNameValue] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
 
-  const history = useHistory();
+  const history = useNavigate();
 
   const handleJoinRoom = async () => {
     setIdentityAction(nameValue);
@@ -47,7 +47,7 @@ const JoinRoomContent = (props) => {
       } else {
         // join a room !
         setRoomIdAction(roomIdValue);
-        history.push("/room");
+        history("/room");
       }
     } else {
       setErrorMessage("Meeting not found. Check your meeting id.");
@@ -55,7 +55,7 @@ const JoinRoomContent = (props) => {
   };
 
   const createRoom = () => {
-    history.push("/room");
+    history("/room");
   };
 
   return (
@@ -71,11 +71,11 @@ const JoinRoomContent = (props) => {
         setConnectOnlyWithAudio={setConnectOnlyWithAudio}
         connectOnlyWithAudio={connectOnlyWithAudio}
       />
-      <ErrorMessage errorMessage={errorMessage} />
       <JoinRoomButtons
         handleJoinRoom={handleJoinRoom}
         isRoomHost={isRoomHost}
       />
+      <ErrorMessage errorMessage={errorMessage} />
     </>
   );
 };
