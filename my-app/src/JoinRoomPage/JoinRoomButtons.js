@@ -25,7 +25,7 @@ const JoinRoomButtons = ({ handleJoinRoom, isRoomHost }) => {
   }
 
   return (
-    <div className='w-full pr-5 flex justify-end'>
+    <div className='w-full mt-auto pr-5 flex justify-end'>
       <Button buttonText={successButtonText} onClickHandler={handleJoinRoom} />
 
       <Button

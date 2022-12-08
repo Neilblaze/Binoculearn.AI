@@ -33,27 +33,22 @@ const ParticipantsSection = ({ messages }) => {
   return (
     <div className='participants_section_container'>
       <ParticipantsLabel />
+
+      <div className="h-[calc(100vh-430px)] overflow-y-scroll">
       <Participants />
 
-
+      </div>
 
       <div style={{ marginTop: 'auto', paddingTop: '10px', borderTop: '1px solid white', marginBottom: '20px', textAlign: 'center' }}>
         <div style={{ height: '250px', fontSize: '12px', lineHeight: '15px', padding: '10px', borderRadius: '10px', margin: '10px', background: '#9aa0a6' }}>
           {summary}
         </div>
         <div onClick={findSummary} style={{ cursor: 'pointer', fontSize: '12px', width: '80%', margin: 'auto', marginBottom: '10px', padding: '4px 9px', background: '#86efac', borderRadius: '20px' }}>
-          Summarize with <span style={{ color: '#be123c' }}>cohere</span>! 🤖
+          Summarize this meeting! 🤖
         </div>
       </div>
     </div>
   )
-  // return (
-  //   <div className='participants_section_container'>
-  //     <ParticipantsLabel />
-  //     <Participants />
-  //     <DirectChat />
-  //   </div>
-  // )
 }
 
 

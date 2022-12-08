@@ -7,7 +7,6 @@ import { START_GOOGLE_SIGNIN } from "../utils/api";
 export const Navbar = (props) => {
   const { currentLoggedInUser,logoutUserAction } = props
 
-  console.log(currentLoggedInUser)
   return (
     <div className='' style={{}}>
       <header className=''>

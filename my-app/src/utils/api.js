@@ -22,3 +22,8 @@ export const GET_CURRENT_USER=`${process.env.REACT_APP_SERVER_URL}/api/auth/me`
 
 
 export const START_GOOGLE_SIGNIN=`${process.env.REACT_APP_SERVER_URL}/api/auth/google/start/`
+
+export const CREATE_ROOM=`${process.env.REACT_APP_SERVER_URL}/api/room/create`
+
+
+export const BROADCAST_MESSAGE=`${process.env.REACT_APP_SERVER_URL}/api/broadcastMessage`

@@ -24,7 +24,7 @@ const IntroductionPage = ({ setIsRoomHostAction,currentLoggedInUser,logoutUserAc
     <div className='introduction_page_container'>
       <Navbar logoutUserAction={logoutUserAction} currentLoggedInUser={currentLoggedInUser}/>
 
-      <div className='w-full justify-center mt-28 gap-24 flex'>
+      <div className='w-full justify-center mt-28 gap-24 flex flex-col sm:flex-row px-10'>
         <div className='flex flex-col'>
           <div
             className=''

@@ -1,11 +1,12 @@
 import { setShowOverlay, setMessages } from "../store/actions";
 import store from "../store/store";
 import * as wss from "./wss";
-import Peer from "simple-peer";
+// import Peer from "simple-peer";
 import { fetchTURNCredentials, getTurnIceServers } from "./turn";
 import getAscii from "./getAscii";
 import axios from "axios";
-import { GET_SENTIMENT_URL } from "./api";
+import { BROADCAST_MESSAGE, GET_SENTIMENT_URL } from "./api";
+
 
 const defaultConstraints = {
   audio: true,
@@ -24,14 +25,17 @@ let localStream;
 
 export const getLocalPreviewAndInitRoomConnection = async (
   isRoomHost,
-  identity,
+  roomTitle,
   roomId = null,
   onlyAudio
 ) => {
+  console.log('calling....')
+  console.log('isRoomhost should be always False: ', isRoomHost)
+
   await fetchTURNCredentials();
 
   const constraints = onlyAudio ? onlyAudioConstraints : defaultConstraints;
-
+  console.log('start called....')
   navigator.mediaDevices
     .getUserMedia(constraints)
     .then((stream) => {
@@ -42,9 +46,7 @@ export const getLocalPreviewAndInitRoomConnection = async (
       // dispatch an action to hide overlay
       store.dispatch(setShowOverlay(false));
 
-      isRoomHost
-        ? wss.createNewRoom(identity, onlyAudio)
-        : wss.joinRoom(identity, roomId, onlyAudio);
+      isRoomHost ? wss.createNewRoom(roomTitle, onlyAudio) : wss.joinRoom(roomId, onlyAudio);
     })
     .catch((err) => {
       console.log(
@@ -55,6 +57,7 @@ export const getLocalPreviewAndInitRoomConnection = async (
 };
 
 let peers = {};
+console.log(`peers:`, peers)
 let streams = [];
 
 const getConfiguration = () => {
@@ -86,7 +89,7 @@ const messengerChannel = "messenger";
 export const prepareNewPeerConnection = (connUserSocketId, isInitiator) => {
   const configuration = getConfiguration();
 
-  peers[connUserSocketId] = new Peer({
+  peers[connUserSocketId] = new window.SimplePeer({
     initiator: isInitiator,
     config: configuration,
     stream: localStream,
@@ -201,6 +204,7 @@ const showLocalVideoPreview = (stream) => {
 };
 
 const addStream = (stream, connUserSocketId) => {
+  console.log('adding stream?')
   //display incoming stream
   const videosContainer = document.getElementById("videos_portal");
   const videoContainer = document.createElement("div");
@@ -315,7 +319,7 @@ const appendNewMessage = (messageData) => {
   store.dispatch(setMessages([...messages, messageData]));
 };
 
-export const sendMessageUsingDataChannel = async (messageContent) => {
+export const sendMessageUsingDataChannel = async (messageContent, roomId) => {
   // append this message locally
   const identity = store.getState().identity;
 
@@ -332,8 +336,17 @@ export const sendMessageUsingDataChannel = async (messageContent) => {
 
   appendNewMessage(localMessageData);
 
+  // send
+  axios.post(BROADCAST_MESSAGE, {
+    roomId,
+    messageContent,
+    sentiment: response.data.sentiment,
+    jwtToken: localStorage.getItem(process.env.REACT_APP_TOKEN_COOKIE_KEY) ?? ""
+  })
+
   const messageData = {
     content: messageContent,
+    sentiment: response.data.sentiment,
     identity,
   };
 

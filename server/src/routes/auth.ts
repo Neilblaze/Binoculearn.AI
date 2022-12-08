@@ -56,7 +56,7 @@ router.get("/google/callback", async (req, res) => {
         res.write(`
             <script>
                 localStorage.setItem('${process.env.TOKEN_COOKIE_KEY}', '${token}')
-                window.location="/dash"
+                window.location="/"
             </script>
         `)
         res.end()

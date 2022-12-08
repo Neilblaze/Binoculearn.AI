@@ -10,8 +10,26 @@ const Actions = {
   SET_DIRECT_CHAT_HISTORY: 'SET_DIRECT_CHAT_HISTORY',
   SET_SOCKET_ID: 'SET_SOCKET_ID',
   SET_USER_INFO: 'SET_USER_INFO',
-  LOGOUT_USER: 'LOGOUT_USER'
+  LOGOUT_USER: 'LOGOUT_USER',
+  SET_GLOBAL_CONNECTION_ERROR_MESSAGE: 'SET_GLOBAL_CONNECTION_ERROR_MESSAGE',
+  SET_ROOM_TITLE: 'SET_ROOM_TITLE'
 };
+
+
+export const setRoomTitle = (roomTitle) => {
+  return {
+    type: Actions.SET_ROOM_TITLE,
+    roomTitle
+  }
+}
+
+
+export const setGlobalConnectionErrorMessage = (errorMessage) => {
+  return {
+    type: Actions.SET_GLOBAL_CONNECTION_ERROR_MESSAGE,
+    errorMessage
+  }
+}
 
 export const setUserInfo = (currentLoggedInUser) => {
   return {

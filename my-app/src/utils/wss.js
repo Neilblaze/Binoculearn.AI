@@ -1,5 +1,5 @@
 import io from "socket.io-client"
-import { setRoomId, setParticipants, setSocketId } from "../store/actions"
+import { setRoomId, setParticipants, setSocketId, setGlobalConnectionErrorMessage } from "../store/actions"
 import store from "../store/store"
 import * as webRTCHandler from "./webRTCHandler"
 import { appendNewMessageToChatHistory } from "./directMessages"
@@ -29,6 +29,7 @@ export const connectWithSocketIOServer = () => {
 
   socket.on("conn-prepare", (data) => {
     const { connUserSocketId } = data
+    console.log('conn-prepare', connUserSocketId, 'HEYYYY12YY')
 
     webRTCHandler.prepareNewPeerConnection(connUserSocketId, false)
 
@@ -42,6 +43,7 @@ export const connectWithSocketIOServer = () => {
 
   socket.on("conn-init", (data) => {
     const { connUserSocketId } = data
+    console.log('conn-init', connUserSocketId, 'HEYYYYYY')
     webRTCHandler.prepareNewPeerConnection(connUserSocketId, true)
   })
 
@@ -52,24 +54,31 @@ export const connectWithSocketIOServer = () => {
   socket.on("direct-message", (data) => {
     appendNewMessageToChatHistory(data)
   })
+
+  socket.on("conn-error", (data) => {
+    const {errorMessage}=data
+    store.dispatch(setGlobalConnectionErrorMessage(errorMessage))
+  })
 }
 
-export const createNewRoom = (identity, onlyAudio) => {
+export const createNewRoom = (roomTitle, onlyAudio) => {
+  console.error('Invalid invokeeee')
   // emit an event to server that we would like to create new room
   const data = {
-    identity,
+    roomTitle,
     onlyAudio,
+    jwtToken: localStorage.getItem(process.env.REACT_APP_TOKEN_COOKIE_KEY) ?? ""
   }
 
   socket.emit("create-new-room", data)
 }
 
-export const joinRoom = (identity, roomId, onlyAudio) => {
+export const joinRoom = (roomId, onlyAudio) => {
   //emit an event to server that we would to join a room
   const data = {
     roomId,
-    identity,
     onlyAudio,
+    jwtToken: localStorage.getItem(process.env.REACT_APP_TOKEN_COOKIE_KEY) ?? ""
   }
 
   socket.emit("join-room", data)

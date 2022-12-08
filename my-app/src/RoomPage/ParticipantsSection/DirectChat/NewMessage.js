@@ -11,6 +11,7 @@ const NewMessage = ({ activeConversation, identity }) => {
       receiverSocketId: activeConversation.socketId,
       identity: identity,
       messageContent: message,
+      jwtToken: localStorage.getItem(process.env.REACT_APP_TOKEN_COOKIE_KEY) ?? ""
     });
 
     setMessage("");

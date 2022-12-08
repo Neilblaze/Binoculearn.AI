@@ -5,7 +5,7 @@ import { sentimentToEmoji } from "./Messages";
 import { connect } from "react-redux";
 
 
-const NewMessage = ({messages}) => {
+const NewMessage = ({messages, roomId}) => {
   const [message, setMessage] = useState("");
 
   const handleTextChange = (event) => {
@@ -23,7 +23,7 @@ const NewMessage = ({messages}) => {
 
   const sendMessage = () => {
     if (message.length > 0) {
-      webRTCHandler.sendMessageUsingDataChannel(message);
+      webRTCHandler.sendMessageUsingDataChannel(message, roomId);
       setMessage("");
     }
   };
@@ -60,7 +60,7 @@ const NewMessage = ({messages}) => {
           onKeyDown={handleKeyPressed}
         />
         <img
-          className="new_message_button"
+          className="new_message_button -ml-6"
           src={SendMessageButton}
           onClick={sendMessage}
         />

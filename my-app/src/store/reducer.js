@@ -2,6 +2,7 @@ import Actions from "./actions";
 
 const initState = {
   identity: "",
+  roomTitle: '', // to be used while creating a new room
   isRoomHost: false,
   connectOnlyWithAudio: false,
   roomId: null,
@@ -12,11 +13,22 @@ const initState = {
   directChatHistory: [],
   socketId: null,
   currentLoggedInUser: null,
+  globalConnectionErrorMessage: ""
 };
 
 const reducer = (state = initState, action) => {
   // console.log('tmp',action.currentLoggedInUser)
   switch (action.type) {
+    case Actions.SET_ROOM_TITLE:
+      return {
+        ...state,
+        roomTitle: action.roomTitle
+      }
+    case Actions.SET_GLOBAL_CONNECTION_ERROR_MESSAGE:
+      return {
+        ...state,
+        globalConnectionErrorMessage: action.errorMessage
+      }
     case Actions.SET_USER_INFO:
       return {
         ...state,

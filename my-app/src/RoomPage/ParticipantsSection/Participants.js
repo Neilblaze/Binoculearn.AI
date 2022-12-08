@@ -19,12 +19,12 @@ const SingleParticipant = (props) => {
   }
 
   return (
-    <>
-      <p className='participants_paragraph' onClick={handleOpenActiveChatbox}>
-        <img style={{ width: "10px" }} src={activeStatus}></img> {identity}
+    <div className="flex flex-col justify-start ml-3">
+      <p className='flex text-sm w-fit justify-center gap-1 text-gray-300 items-center' onClick={handleOpenActiveChatbox}>
+        <img style={{ width: "10px", height: "10px" }} src={activeStatus}></img> {identity}
       </p>
       {!lastItem && <span className='participants_separator_line'></span>}
-    </>
+    </div>
   )
 }
 

@@ -1,3 +1,45 @@
+
+.videos_portal_styles {
+  margin-left: 20%;
+  height: calc(100vh - 10%);
+  overflow-y: scroll;
+  left: 0;
+  top: 0;
+  position: absolute;
+  width: calc(100vw - 40%);
+  flex-wrap: wrap;
+  padding: 80px 10px;
+  gap: 5px;
+
+  @apply flex justify-center;
+}
+
+#dummy_video_canvas {
+  display: none;
+}
+
+.video_track_container{
+  height: 350px !important;
+  width: 90% !important;
+  @apply mx-auto my-3;
+}
+.video_track_container pre{
+  text-align: center;
+  height: 350px;
+  width: 90%;
+  margin: 0;
+  font-size: 5px;
+  /* background-color: #545657; */
+  overflow: hidden;
+  position: relative;
+  object-position: center;
+  color: white;
+  border-radius: 10px;
+  padding: 1px;
+  /* border-radius:10%; */
+  @apply mx-auto ;
+}
+
 .room_container {
   width: 100%;
   height: 100vh;
@@ -9,7 +51,6 @@
 .chat_section_container {
   height: 100%;
   width: 20%;
-  background-color: #1f272f;
   display: flex;
   flex-direction: column;
 
@@ -18,6 +59,8 @@
   font-weight: 500;
   font-size: 30px;
   line-height: 36px;
+
+  @apply bg-gray-800;
 }
 
 .chat_label_container {
@@ -58,7 +101,7 @@
 
 .new_message_button {
   position: absolute;
-  right: 10%;
+  right: 15%;
 }
 
 .messages_container {
@@ -69,7 +112,7 @@
 }
 
 .message_container {
-  margin-top: 5px;
+  margin-top: 0px;
   display: flex;
   flex-direction: column;
 }
@@ -83,8 +126,7 @@
 }
 
 .message_left_styles {
-  background: rgba(0, 82, 201, 0.1);
-  color: black;
+  @apply bg-yellow-600;
 }
 
 .message_right_styles {
@@ -107,6 +149,7 @@
   line-height: 16px;
   font-size: 12px;
   display: inline-block;
+  height: max-content;
 }
 
 /* width */
@@ -182,16 +225,16 @@
 }
 
 .participants_separator_line {
-  width: calc(100% - 80px);
-  height: 2px;
-  background-color: #e5e5e5;
-  margin-left: 40px;
+  max-width: 80px;
+  width: 90%;
+  height: 1px;
   margin-top: 5px;
   margin-bottom: 5px;
+  @apply bg-gray-500 ml-5;
 }
 
 .participants_section_container {
-  height: 100%;
+  /* height: 100%;
   width: 20%;
   background-color: #1f272f;
   display: flex;
@@ -201,20 +244,22 @@
   font-style: normal;
   font-weight: 500;
   font-size: 30px;
-  line-height: 36px;
+  line-height: 36px; */
+  @apply bg-gray-800 text-sm w-[20%];
 }
 
 .participants_label_container {
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
+  @apply py-4;
 }
 
 .participants_label_paragraph {
-  font-weight: 700;
+  font-weight: 600;
   color: #9ca5ab;
-  margin-left: 40px;
-  font-size: 25px;
+  text-align: center;
+  @apply w-full text-2xl pb-5 lowercase;
 }
 
 .local_screen_share_preview {
@@ -241,9 +286,10 @@
   position: absolute;
   left: 20%;
   bottom: 0;
-  background: linear-gradient(168.68deg, #7900c9 1.12%, #a70adb 100%);
   border-top-left-radius: 25px;
   border-top-right-radius: 25px;
+  border: 1px solid;
+  @apply bg-gray-800 border-gray-500;
 }
 
 .video_button_container {
@@ -253,7 +299,7 @@
 }
 
 .video_button_container img{
-  width: 45px;
+  width: 60px !important;
 }
 
 .video_button_image {
@@ -271,14 +317,12 @@
 .video_button_end {
   width: 200px;
   height: 60px;
-  font-size: 18px;
-  font-weight: 600;
   border-radius: 65px;
   border: none;
   color: white;
-  background: #fc5d5b;
-  box-shadow: 0px 3px 30px rgba(252, 93, 91, 0.1);
   transition: 0.2s;
+
+  @apply bg-red-600
 }
 
 .video_button_end:hover {
@@ -353,12 +397,14 @@ video {
 }
 
 .room_label_paragraph {
-  font-size: 17px;
+  font-size: 16px;
+  height: 50px;
   color: white;
   margin-top: 0;
-  padding: 18px 38px;
-  background: linear-gradient(168.68deg, #7900c9 1.12%, #a70adb 100%);
+  padding: 10px 20px;
   border-radius: 0px 0px 15px 15px;
+  border: 1px solid;
+  @apply bg-gray-800 border-gray-500;
 }
 
 .video_track_container:first-child:nth-last-child(1) {
@@ -426,6 +472,7 @@ video {
   flex-direction: column;
   justify-content: flex-end;
   padding: 10px;
+  @apply bg-gray-900;
 }
 
 .full_screen {
@@ -479,8 +526,6 @@ video {
 }
 
 .new_message_direct_border {
-  border-left: 1px solid #e5e5e5;
-  border-right: 1px solid #e5e5e5;
   width: 95%;
 }
 

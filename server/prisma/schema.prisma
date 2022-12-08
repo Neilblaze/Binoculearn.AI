@@ -24,13 +24,14 @@ model user {
 }
 
 model meeting_room {
-  id           String        @id @default(auto()) @map("_id") @db.ObjectId
-  name         String
-  owner_id     String
-  owner        user          @relation(fields: [owner_id], references: [id])
-  created_time DateTime      @default(now())
-  transcript   transcript[]
-  participant  participant[]
+  id             String           @id @default(auto()) @map("_id") @db.ObjectId
+  title          String
+  owner_id       String
+  owner          user             @relation(fields: [owner_id], references: [id])
+  created_time   DateTime         @default(now())
+  transcript     transcript[]
+  participant    participant[]
+  incall_message incall_message[]
 }
 
 model participant {
@@ -65,6 +66,9 @@ model transcript {
 model incall_message {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
   sent_at DateTime @default(now())
+
+  meeting_id String
+  meeting    meeting_room @relation(fields: [meeting_id], references: [id])
 
   text                  String
   englishTranslatedText String

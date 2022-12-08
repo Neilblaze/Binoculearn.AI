@@ -25,18 +25,18 @@ const JoinRoomInputs = (props) => {
 
   return (
     <div className="join_room_inputs_container">
-      {!isRoomHost && (
+      {!isRoomHost ? (
         <Input
           placeholder="Enter meeting ID"
           value={roomIdValue}
           changeHandler={handleRoomIdValueChange}
         />
-      )}
-      <Input
-        placeholder="Enter your Name"
+      ) : <Input
+        placeholder="Set some catchy meeting name"
         value={nameValue}
         changeHandler={handleNameValueChange}
-      />
+      />}
+
     </div>
   );
 };

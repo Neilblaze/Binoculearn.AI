@@ -106,8 +106,8 @@ header {
 
 .checkbox_container {
   display: flex;
-  margin-left: 35px;
-  margin-top: 5px;
+  margin-left: 75px;
+  margin-top: 15px;
   align-items: center;
 }
 

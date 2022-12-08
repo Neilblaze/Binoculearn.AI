@@ -6,29 +6,32 @@ import {
   setConnectOnlyWithAudio,
   setIdentity,
   setRoomId,
+  setRoomTitle,
 } from "../store/actions";
 import ErrorMessage from "./ErrorMessage";
 import JoinRoomButtons from "./JoinRoomButtons";
 import { useNavigate } from "react-router-dom";
-import { getRoomExists } from "../utils/api";
+import { CREATE_ROOM, getRoomExists } from "../utils/api";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const JoinRoomContent = (props) => {
   const {
     isRoomHost,
     setConnectOnlyWithAudio,
     connectOnlyWithAudio,
-    setIdentityAction,
+    setRoomTitleAction,
     setRoomIdAction,
   } = props;
 
   const [roomIdValue, setRoomIdValue] = useState("");
-  const [nameValue, setNameValue] = useState("");
+  const [roomNameValue, setRoomNameValue] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
 
   const history = useNavigate();
 
   const handleJoinRoom = async () => {
-    setIdentityAction(nameValue);
+    setRoomTitleAction(roomNameValue);
     if (isRoomHost) {
       createRoom();
     } else {
@@ -55,7 +58,18 @@ const JoinRoomContent = (props) => {
   };
 
   const createRoom = () => {
-    history("/room");
+    axios.post(CREATE_ROOM, {
+      roomTitle: roomNameValue,
+      connectOnlyWithAudio,
+      jwtToken: localStorage.getItem(process.env.REACT_APP_TOKEN_COOKIE_KEY) ?? ""
+    })
+      .then(f => {
+        console.log(f.data)
+        if (f.data.error) throw new Error(f.data.message);
+        window.location.href = `/room/${f.data.roomId}`
+      }).catch(err => {
+        toast(err.message)
+      })
   };
 
   return (
@@ -63,8 +77,8 @@ const JoinRoomContent = (props) => {
       <JoinRoomInputs
         roomIdValue={roomIdValue}
         setRoomIdValue={setRoomIdValue}
-        nameValue={nameValue}
-        setNameValue={setNameValue}
+        nameValue={roomNameValue}
+        setNameValue={setRoomNameValue}
         isRoomHost={isRoomHost}
       />
       <OnlyWithAudioCheckbox
@@ -90,7 +104,7 @@ const mapActionsToProps = (dispatch) => {
   return {
     setConnectOnlyWithAudio: (onlyWithAudio) =>
       dispatch(setConnectOnlyWithAudio(onlyWithAudio)),
-    setIdentityAction: (identity) => dispatch(setIdentity(identity)),
+    setRoomTitleAction: (roomTitle) => dispatch(setRoomTitle(roomTitle)),
     setRoomIdAction: (roomId) => dispatch(setRoomId(roomId)),
   };
 };

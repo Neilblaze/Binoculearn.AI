@@ -7,6 +7,14 @@ import dotenv from 'dotenv'
 import cohere from 'cohere-ai'
 import authRoutes from './routes/auth'
 import path from "path"
+import { getAuthUser, getAuthUserFromJwt } from "./utils/getAuthUser"
+import { jwtUserPayloadType } from "./utils/getAuthToken"
+import { prisma, PrismaClient } from "@prisma/client"
+import language from '@google-cloud/language'
+
+const client = new language.LanguageServiceClient();
+
+
 dotenv.config()
 
 
@@ -21,32 +29,13 @@ app.use(express.static(path.join(__dirname, 'build')));
 
 
 let connectedUsers: any = []
-let rooms: {
-    id: string,
+let roomsConnectedUsers: {
+    roomId: string,
     connectedUsers: any
 }[] = []
 
-const cohereApiKey=process.env.COHERE_API_KEY
-if(!cohereApiKey) throw "Invalid cohere API"
-
-
-// create route to check if room exists
-app.get("/api/room-exists/:roomId", (req, res) => {
-    const { roomId } = req.params
-    const room = rooms.find((room) => room.id === roomId)
-
-    if (room) {
-        // send reponse that room exists
-        if (room.connectedUsers.length > 3) {
-            return res.send({ roomExists: true, full: true })
-        } else {
-            return res.send({ roomExists: true, full: false })
-        }
-    } else {
-        // send response that room does not exists
-        return res.send({ roomExists: false })
-    }
-})
+const cohereApiKey = process.env.COHERE_API_KEY
+if (!cohereApiKey) throw "Invalid cohere API"
 
 app.get("/api/get-turn-credentials", (req, res) => {
     const accountSid = process.env.TWILIO_ACCOUNT_SID
@@ -77,7 +66,8 @@ io.on("connection", (socket: any) => {
     console.log(`user connected ${socket.id}`)
 
     socket.on("create-new-room", (data: any) => {
-        createNewRoomHandler(data, socket)
+        console.error('Invalid event create-new-room')
+        // createNewRoomHandler(data, socket)
     })
 
     socket.on("join-room", (data: any) => {
@@ -102,47 +92,88 @@ io.on("connection", (socket: any) => {
 })
 
 // socket.io handlers
+// const createNewRoomHandler = async (data: any, socket: any) => {
+//     console.log("host is creating a new room")
+//     console.log(data)
+//     const { roomTitle, onlyAudio, jwtToken } = data;
 
-const createNewRoomHandler = (data: any, socket: any) => {
-    console.log("host is creating a new room")
-    console.log(data)
-    const { identity, onlyAudio } = data
+//     if(!roomTitle){
+//         console.error('No roomTitle')
+//         // send error message
+//         io.to(socket.id).emit('conn-error', {
+//             errorMessage: 'No roomTitle'
+//         })
+//         return;
+//     }
+//     let user: jwtUserPayloadType;
+//     try{
+//         const result=getAuthUserFromJwt(jwtToken)
+//         if(!result){
+//             throw new Error('Something went wrong with jwt. [141]')
+//         }
+//         user=result;
+//     }catch(err){
+//         console.error('No jwtToken')
+//         // send error message
+//         io.to(socket.id).emit('conn-error', {
+//             errorMessage: 'No jwt Token'
+//         })
+//         return;
+//     }
+//     const roomId = uuidv4()
+//     const identity=user.name
 
-    const roomId = uuidv4()
+//     // create new user
+//     const newUser = {
+//         identity,
+//         id: uuidv4(),
+//         socketId: socket.id,
+//         roomId,
+//         onlyAudio,
+//     }
 
-    // create new user
-    const newUser = {
-        identity,
-        id: uuidv4(),
-        socketId: socket.id,
-        roomId,
-        onlyAudio,
+//     // push that user to connectedUsers
+//     connectedUsers = [...connectedUsers, newUser]
+
+//     //create new room
+//     const newRoom = {
+//         id: roomId,
+//         connectedUsers: [newUser],
+//     }
+//     // join socket.io room
+//     socket.join(roomId)
+
+//     rooms = [...rooms, newRoom]
+//     console.log(rooms)
+//     // emit to that client which created that room roomId
+//     socket.emit("room-id", { roomId })
+
+//     // emit an event to all users connected
+//     // to that room about new users which are right in this room
+//     socket.emit("room-update", { connectedUsers: newRoom.connectedUsers })
+// }
+
+const joinRoomHandler = async (data: { roomId: any; onlyAudio: any; jwtToken: string }, socket: { id: any; join: (arg0: any) => void }) => {
+
+    console.log('args', data)
+    const { roomId, onlyAudio, jwtToken } = data
+
+    let user: jwtUserPayloadType;
+    try {
+        const result = getAuthUserFromJwt(jwtToken)
+        if (!result) {
+            throw new Error('Something went wrong with jwt. [141]')
+        }
+        user = result;
+    } catch (err) {
+        console.error('No jwtToken')
+        // send error message
+        io.to(socket.id).emit('conn-error', {
+            errorMessage: 'No jwt Token'
+        })
+        return;
     }
-
-    // push that user to connectedUsers
-    connectedUsers = [...connectedUsers, newUser]
-
-    //create new room
-    const newRoom = {
-        id: roomId,
-        connectedUsers: [newUser],
-    }
-    // join socket.io room
-    socket.join(roomId)
-
-    rooms = [...rooms, newRoom]
-
-    // emit to that client which created that room roomId
-    socket.emit("room-id", { roomId })
-
-    // emit an event to all users connected
-    // to that room about new users which are right in this room
-    socket.emit("room-update", { connectedUsers: newRoom.connectedUsers })
-}
-
-const joinRoomHandler = (data: { identity: any; roomId: any; onlyAudio: any }, socket: { id: any; join: (arg0: any) => void }) => {
-    const { identity, roomId, onlyAudio } = data
-
+    const identity = user.name
     const newUser = {
         identity,
         id: uuidv4(),
@@ -152,12 +183,66 @@ const joinRoomHandler = (data: { identity: any; roomId: any; onlyAudio: any }, s
     }
 
     // join room as user which just is trying to join room passing room id
-    const room = rooms.find((room) => room.id === roomId)
+    const prisma = new PrismaClient()
+    const room = await prisma.meeting_room.findFirst({
+        where: {
+            id: roomId
+        }
+    })
+    let localRoomInstance = roomsConnectedUsers.find((room) => room.roomId === roomId)
+
     if (!room) {
-        console.error('Invalid room Id: ', roomId)
+        console.error('1Invalid room Id: ', roomId, localRoomInstance, room)
+        io.to(socket.id).emit('conn-error', {
+            errorMessage: 'Invalid room Id. Are you sure that the meeting exists? 🤔'
+        })
         return;
     }
-    room.connectedUsers = [...room.connectedUsers, newUser]
+
+    if (!localRoomInstance) {
+        localRoomInstance = {
+            roomId: room.id,
+            connectedUsers: []
+        }
+        roomsConnectedUsers = [...roomsConnectedUsers, localRoomInstance]
+    }
+
+    // make this user as one of the participant
+    const participantInstance = await prisma.participant.findFirst({
+        where: {
+            meeting_id: roomId,
+            user_id: user.id
+        }
+    })
+
+    try {
+        // perform the following update or create asynchronously
+        if (participantInstance) {
+            // update
+            const instance = await prisma.participant.update({
+                where: {
+                    meeting_user_id: participantInstance.meeting_user_id,
+                },
+                data: {
+                    last_joined_at: new Date()
+                }
+            })
+            console.log(instance)
+        } else {
+            // create
+            const instance = await prisma.participant.create({
+                data: {
+                    meeting_id: roomId,
+                    user_id: user.id
+                }
+            })
+            console.log('aa', instance)
+        }
+    } catch (err) {
+        console.error("152: ", err.message)
+    }
+
+    localRoomInstance.connectedUsers = [...localRoomInstance.connectedUsers, newUser]
 
     // join socket.io room
     socket.join(roomId)
@@ -166,7 +251,7 @@ const joinRoomHandler = (data: { identity: any; roomId: any; onlyAudio: any }, s
     connectedUsers = [...connectedUsers, newUser]
 
     // emit to all users which are already in this room to prepare peer connection
-    room.connectedUsers.forEach((user: { socketId: any }) => {
+    localRoomInstance.connectedUsers.forEach((user: { socketId: any }) => {
         if (user.socketId !== socket.id) {
             const data = {
                 connUserSocketId: socket.id,
@@ -176,7 +261,7 @@ const joinRoomHandler = (data: { identity: any; roomId: any; onlyAudio: any }, s
         }
     })
 
-    io.to(roomId).emit("room-update", { connectedUsers: room.connectedUsers })
+    io.to(roomId).emit("room-update", { connectedUsers: localRoomInstance.connectedUsers })
 }
 
 const disconnectHandler = (socket: { id: any; leave: (arg0: any) => void }) => {
@@ -185,9 +270,9 @@ const disconnectHandler = (socket: { id: any; leave: (arg0: any) => void }) => {
 
     if (user) {
         // remove user from room in server
-        const room = rooms.find((room) => room.id === user.roomId)
+        const room = roomsConnectedUsers.find((room) => room.roomId === user.roomId)
         if (!room) {
-            console.error('Invalid room Id: ', user.roomId)
+            console.error('2Invalid room Id: ', user.roomId)
             return;
         }
 
@@ -201,17 +286,36 @@ const disconnectHandler = (socket: { id: any; leave: (arg0: any) => void }) => {
         // close the room if amount of the users which will stay in room will be 0
         if (room.connectedUsers.length > 0) {
             // emit to all users which are still in the room that user disconnected
-            io.to(room.id).emit("user-disconnected", { socketId: socket.id })
+            io.to(room.roomId).emit("user-disconnected", { socketId: socket.id })
 
             // emit an event to rest of the users which left in the toom new connectedUsers in room
-            io.to(room.id).emit("room-update", {
+            io.to(room.roomId).emit("room-update", {
                 connectedUsers: room.connectedUsers,
             })
         } else {
-            rooms = rooms.filter((r) => r.id !== room.id)
+            roomsConnectedUsers = roomsConnectedUsers.filter((r) => r.roomId !== room.roomId)
         }
     }
 }
+
+// create route to check if room exists
+app.get("/api/room-exists/:roomId", (req, res) => {
+    const { roomId } = req.params
+    const room = roomsConnectedUsers.find((room) => room.roomId === roomId)
+
+    if (room) {
+        // send reponse that room exists
+        if (room.connectedUsers.length > 3) {
+            return res.send({ roomExists: true, full: true })
+        } else {
+            return res.send({ roomExists: true, full: false })
+        }
+    } else {
+        // send response that room does not exists
+        return res.send({ roomExists: false })
+    }
+})
+
 
 const signalingHandler = (data: { connUserSocketId: any; signal: any }, socket: { id: any }) => {
     const { connUserSocketId, signal } = data
@@ -256,34 +360,21 @@ const directMessageHandler = (data: { receiverSocketId: any; messageContent: any
 
 
 const findSentiment = async (text: string) => {
-    cohere.init(cohereApiKey)
-
-    const response = await cohere.classify(
-        {
-            inputs: [text],
-            examples: [
-                { text: "The order came 5 days early", label: "positive" },
-                { text: "The item exceeded my expectations", label: "positive" },
-                { text: "I ordered more for my friends", label: "positive" },
-                { text: "I would buy this again", label: "positive" },
-                { text: "I would recommend this to others", label: "positive" },
-                { text: "The package was damaged", label: "negative" },
-                { text: "The order is 5 days late", label: "negative" },
-                { text: "The order was incorrect", label: "negative" },
-                { text: "I want to return my item", label: "negative" },
-                { text: "The item\'s material feels low quality", label: "negative" },
-                { text: "The product was okay", label: "neutral" },
-                { text: "I received five items in total", label: "neutral" },
-                { text: "I bought it from the website", label: "neutral" },
-                { text: "I used the product this morning", label: "neutral" },
-                { text: "The product arrived yesterday", label: "neutral" },
-            ]
+    const result=await client.analyzeSentiment({
+        document: {
+            type: 'PLAIN_TEXT',
+            content: text
         }
-    );
-
-    const val = response.body.classifications[0].prediction
-    console.log(val, response.body.classifications[0])
-    return val === 'negative' ? -1 : (val === 'positive' ? 1 : 0);
+    })
+    console.log(result)
+    const val = result[0].documentSentiment?.score
+    if(val && val>=0.5){
+        return 1;
+    }else if(val && val <-0.5) {
+        return -1;
+    }else{
+        return 0;
+    }
 }
 
 
@@ -332,9 +423,94 @@ app.post("/api/summarize", async (req, res) => {
 });
 
 
+app.post('/api/broadcastMessage', async (req, res) => {
+    try {
+        const data: {
+            roomId: string,
+            messageContent: string,
+            sentiment: number,
+            jwtToken: string
+        } = req.body
+
+        let user: jwtUserPayloadType;
+        const result = getAuthUserFromJwt(data.jwtToken)
+        if (!result) {
+            throw new Error('Something went wrong. Couldn\'t extract user from jwt')
+        }
+        user = result;
+
+
+        const primsa = new PrismaClient()
+        const instance = await primsa.incall_message.create({
+            data: {
+                sender_id: user.id,
+                text: data.messageContent,
+                englishTranslatedText: data.messageContent,
+                meeting_id: data.roomId // we don't need to validate it. :)
+            }
+        })
+
+        res.send({
+            error: false,
+            instance
+        })
+    } catch (err) {
+        console.log(err)
+        res.send({
+            sentiment: 0
+        });
+    }
+})
+
+
+
+app.post('/api/room/create', async (req, res) => {
+    const data: {
+        roomTitle: string,
+        connectOnlyWithAudio: boolean,
+        jwtToken: string
+    } = req.body;
+
+    console.log("Acac", req.body)
+    let user: jwtUserPayloadType;
+    try {
+        const result = getAuthUserFromJwt(data.jwtToken)
+        if (!result) {
+            throw new Error('Something went wrong. Couldn\'t extract user from jwt')
+        }
+        user = result;
+    } catch (err) {
+        return res.send({
+            error: true,
+            message: err.message
+        })
+    }
+
+    // create a room
+    const prisma = new PrismaClient()
+    const newMeeting = await prisma.meeting_room.create({
+        data: {
+            title: data.roomTitle,
+            owner_id: user.id,
+        }
+    })
+
+    roomsConnectedUsers = [...roomsConnectedUsers, {
+        roomId: newMeeting.id,
+        connectedUsers: [], // not even the owner is connected yet!
+    }]
+
+
+    return res.send({
+        error: false,
+        roomId: newMeeting.id
+    })
+})
+
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname+'/build/index.html'));
-  })
+    res.sendFile(path.join(__dirname + '/build/index.html'));
+})
+
 
 
 server.listen(PORT, () => {

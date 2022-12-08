@@ -20,10 +20,10 @@ const Message = ({ author, content, sameAuthor, messageCreatedByMe, sentiment })
     : "message_left_styles";
 
   return (
-    <div className={`message_container ${alignClass}`} style={{ position: 'relative' }}>
+    <div className={`message_container ${alignClass}`}>
       {!sameAuthor && <p className="message_title">{authorText}</p>}
       <p style={{ color: 'white', }} className={`message_content ${contentAdditionalStyles}`}>{content} </p>
-      <p style={{ color: 'white', fontSize: '11px', position: 'absolute', bottom: '-30px' }}>Sentiment: {sentimentToEmoji(sentiment)}</p>
+      <p style={{ color: 'white', fontSize: '11px', marginTop: '-8px' }}>Sentiment: {sentimentToEmoji(sentiment)}</p>
     </div>
   );
 };

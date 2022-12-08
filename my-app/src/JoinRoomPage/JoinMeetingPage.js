@@ -11,21 +11,18 @@ import logo from "../resources/images/logo.png"
 import "./JoinRoomPage.css"
 import { Navbar } from "../IntroductionPage/Navbar"
 
-const JoinRoomPage = (props) => {
-  const { setIsRoomHostAction, isRoomHost,currentLoggedInUser, logoutUserAction } = props
+const JoinMeetingPage = (props) => {
+  const { setIsRoomHostAction, isRoomHost, currentLoggedInUser, logoutUserAction } = props
 
   const search = useLocation().search
 
   useEffect(() => {
-    const isRoomHost = new URLSearchParams(search).get("host")
-    if (isRoomHost) {
-      setIsRoomHostAction(true)
-    }
+    setIsRoomHostAction(false)
   }, [])
 
   return (
     <div className='join_room_page_container'>
-      <Navbar logoutUserAction={logoutUserAction} currentLoggedInUser={currentLoggedInUser}/>
+      <Navbar logoutUserAction={logoutUserAction} currentLoggedInUser={currentLoggedInUser} />
       <div
         style={{
           display: "flex",
@@ -55,4 +52,4 @@ const mapActionsToProps = (dispatch) => {
   }
 }
 
-export default connect(mapStoreStateToProps, mapActionsToProps)(JoinRoomPage)
+export default connect(mapStoreStateToProps, mapActionsToProps)(JoinMeetingPage)
