@@ -6,6 +6,7 @@ import twilio from "twilio"
 import dotenv from 'dotenv'
 import cohere from 'cohere-ai'
 import authRoutes from './routes/auth'
+import path from "path"
 dotenv.config()
 
 
@@ -16,6 +17,8 @@ const server = http.createServer(app)
 app.use(cors())
 app.use(express.json())
 app.use('/api/auth', authRoutes)
+app.use(express.static(path.join(__dirname, 'build')));
+
 
 let connectedUsers: any = []
 let rooms: {
@@ -327,6 +330,12 @@ app.post("/api/summarize", async (req, res) => {
         res.status(500).json({ summary: "Error" });
     }
 });
+
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname+'/build/index.html'));
+  })
+
 
 server.listen(PORT, () => {
     console.log(`Server is listening on ${PORT}`)
